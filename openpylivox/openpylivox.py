@@ -3857,7 +3857,7 @@ def _convertBin2LAS(filePathAndName, deleteBin):
 
                         pbari.close()
                         binFile.close()
-                        print("   - Point data was converted successfully to LAS, see file: " + filePathAndName + ".las")
+                        print("   - Point data was converted successfully to LAS, see file: " + filePathAndName + ".laz")
                         if deleteBin:
                             os.remove(filePathAndName)
                             print("     * OPL point data binary file has been deleted")
