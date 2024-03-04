@@ -3812,10 +3812,8 @@ def _convertBin2LAS(filePathAndName, deleteBin):
                             except:
                                 break
 
-                        #save lists of point data attributes to LAS file
-                        hdr = laspy.header.Header()
-                        hdr.version = "1.2"
-                        hdr.data_format_id = 3
+                        # Start to Generate laspy header.
+                        hdr = laspy.header.LasHeader( version="1.4", point_format=6 )
 
                         # the following ID fields must be less than or equal to 32 characters in length
                         System_ID = "OpenPyLivox"
@@ -3831,10 +3829,8 @@ def _convertBin2LAS(filePathAndName, deleteBin):
                             for i in range(0, missingLength):
                                 Software_ID += " "
 
-                        hdr.system_id = System_ID
-                        hdr.software_id = Software_ID
-
-                        lasfile = laspy.file.File(filePathAndName + ".las", mode="w", header=hdr)
+                        hdr.system_identifier = System_ID
+                        hdr.generating_software = Software_ID
 
                         coord1s = np.asarray(coord1s, dtype=np.float32)
                         coord2s = np.asarray(coord2s, dtype=np.float32)
@@ -3843,18 +3839,21 @@ def _convertBin2LAS(filePathAndName, deleteBin):
                         xmin = np.floor(np.min(coord1s))
                         ymin = np.floor(np.min(coord2s))
                         zmin = np.floor(np.min(coord3s))
-                        lasfile.header.offset = [xmin, ymin, zmin]
 
-                        lasfile.header.scale = [0.001, 0.001, 0.001]
+                        hdr.offsets = [xmin, ymin, zmin]
+                        hdr.scales = [0.001, 0.001, 0.001]
+
+                        lasfile = laspy.lasdata.LasData( header=hdr )
 
                         lasfile.x = coord1s
                         lasfile.y = coord2s
                         lasfile.z = coord3s
-                        lasfile.gps_time = np.asarray(times, dtype=np.float32)
+                        
+                        lasfile.gps_time = np.asarray(times, dtype=np.float64)
                         lasfile.intensity = np.asarray(intensity, dtype=np.int16)
-                        lasfile.return_num = np.asarray(returnNums, dtype=np.int8)
+                        lasfile.return_number = np.asarray(returnNums, dtype=np.int8)
 
-                        lasfile.close()
+                        lasfile.write( destination=filePathAndName + ".laz" )
 
                         pbari.close()
                         binFile.close()
