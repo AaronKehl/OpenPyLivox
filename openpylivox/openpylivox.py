@@ -3802,6 +3802,7 @@ def _convertBin2LAS(filePathAndName, deleteBin):
                                     spatial_confidence.append( tag_bits & 0b00000011 )                       # Bits 1, 0 Point property based on spatial position
                                     num_returns_wfd.append(1)
 
+
                                     coord1s.append(float(struct.unpack('<i', binFile.read(4))[0]) / 1000.0)
                                     coord2s.append(float(struct.unpack('<i', binFile.read(4))[0]) / 1000.0)
                                     coord3s.append(float(struct.unpack('<i', binFile.read(4))[0]) / 1000.0)
